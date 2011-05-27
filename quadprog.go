@@ -25,7 +25,7 @@ extern void aind(
 */
 import "C"
 import (
-	"fmt"
+	. "github.com/badgerodon/lalg"
 	"os"
 	"unsafe"
 )
@@ -76,49 +76,6 @@ func run(dmat []float64,
 	)
 }
 
-type (
-	Matrix struct {
-		elements []float64
-		rows, cols int
-	}
-	
-	Vector []float64
-)
-
-func NewMatrix(rows, cols int) Matrix {
-	return Matrix{make([]float64, rows*cols),rows,cols}
-}
-func NewIdentity(size int) Matrix {
-	m := NewMatrix(size, size)
-	for i := 0; i < size; i++ {
-		m.Set(i, i, 1.0)
-	}
-	return m
-}
-
-func (this Matrix) Get(row, col int) float64 {
-	return this.elements[row * this.cols + col]
-}
-func (this Matrix) Set(row, col int, value float64) {
-	this.elements[row * this.cols + col] = value
-}
-func (this Matrix) String() string {
-	str := ""
-	for i := 0; i < this.rows; i++ {
-		if i > 0 {		
-			str += "\n"
-		}
-		for j := 0; j < this.cols; j++ {
-			str += fmt.Sprintf("%6.2f", this.Get(i,j))
-		}
-	}
-	return str
-}
-
-func NewVector(size int) Vector {
-	return make([]float64, size)
-}
-
 func max(a, b int) int {
 	if a > b {
 		return a
@@ -141,18 +98,18 @@ assumed to be symmetric.
 */
 func Solve(D Matrix, d Vector, A1 Matrix, b1 Vector, A2 Matrix, b2 Vector) (Vector, os.Error) {
 	// The algorithm expects a combined "A" matrix. So build it
-	A := NewMatrix(A1.rows + A2.rows, max(A2.cols, A1.cols))
+	A := NewMatrix(A1.Rows + A2.Rows, max(A2.Cols, A1.Cols))
 	b := NewVector(len(b1) + len(b2))
 	meq := len(b1)
 	
-	for i := 0; i < A1.rows; i++ {
-		for j := 0; j < A1.cols; j++ {
+	for i := 0; i < A1.Rows; i++ {
+		for j := 0; j < A1.Cols; j++ {
 			A.Set(i, j, A1.Get(i, j))
 		}
 	}
 	
-	for i := 0; i < A2.rows; i++ {
-		for j := 0; j < A2.cols; j++ {
+	for i := 0; i < A2.Rows; i++ {
+		for j := 0; j < A2.Cols; j++ {
 			A.Set(meq+i, j, A2.Get(i, j))
 		}
 	}
@@ -166,16 +123,16 @@ func Solve(D Matrix, d Vector, A1 Matrix, b1 Vector, A2 Matrix, b2 Vector) (Vect
 	}
 	
 	error := 0
-	n := D.rows
-	q := A.rows
+	n := D.Rows
+	q := A.Rows
 	
-	if n != D.cols {
+	if n != D.Cols {
 		return nil, os.NewError("The D Matrix is not symmetric")
 	}
 	if n != len(d) {
 		return nil, os.NewError("The D Matrix and the D Vector are incompatible")
 	}
-	if n != A.cols {
+	if n != A.Cols {
 		return nil, os.NewError("The A Matrix and the D Vector are incompatible")
 	}
 	if q != len(b) {
@@ -194,14 +151,14 @@ func Solve(D Matrix, d Vector, A1 Matrix, b1 Vector, A2 Matrix, b2 Vector) (Vect
 	work := NewVector(2 * n + r * (r + 5) / 2 + 2 * q + 1)
 	iter := make([]int, 2)
 	
-	run(D.elements,
+	run(D.Elements,
 		d,
 		&n,
 		&n,
 		sol,
 		lagr,
 		&crval,
-		A.elements,
+		A.Elements,
 		b,
 		&n,
 		&q,
