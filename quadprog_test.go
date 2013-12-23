@@ -1,7 +1,6 @@
 package quadprog
 
 import (
-	"fmt"
 	. "github.com/badgerodon/lalg"
 	"testing"
 )
@@ -32,5 +31,24 @@ func Test(t *testing.T) {
 
 	sol, err := Solve(D, d, A1, b1, A2, b2)
 
-	fmt.Print(sol, err)
+	if err != nil {
+		t.Errorf("expected no error got %v", err)
+	}
+
+	if len(sol) != 4 {
+		t.Errorf("expected 4 results got %v", len(sol))
+	}
+
+	if sol[0] != 0.25 {
+		t.Errorf("expected w0 to be 0.25, got %v", sol[0])
+	}
+	if sol[1] != 0.03571428571428571 {
+		t.Errorf("expected w1 to be 0.03571428571428571, got %v", sol[1])
+	}
+	if sol[2] != 0.25 {
+		t.Errorf("expected w2 to be 0.25, got %v", sol[2])
+	}
+	if sol[3] != 0.25 {
+		t.Errorf("expected w3 to be 0.25, got %v", sol[3])
+	}
 }

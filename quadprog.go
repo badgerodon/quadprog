@@ -21,7 +21,7 @@ extern void aind(
 	int *ind, int *m, int *q, int *n, int *ok
 );
 
-#cgo windows LDFLAGS: lib/windows/aind.o lib/windows/daxpy.o lib/windows/ddot.o lib/windows/dpofa.o lib/windows/dscal.o lib/windows/solve.QP.o lib/windows/util.o
+#cgo windows LDFLAGS: lib/windows/amd64/aind.o lib/windows/amd64/daxpy.o lib/windows/amd64/ddot.o lib/windows/amd64/dpofa.o lib/windows/amd64/dscal.o lib/windows/amd64/solve.QP.o lib/windows/amd64/util.o
 */
 import "C"
 import (
